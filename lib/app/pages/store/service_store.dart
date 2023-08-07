@@ -14,7 +14,7 @@ class ServiceStore {
   final ValueNotifier<List<Service>> state = ValueNotifier<List<Service>>([]);
 
   //Error
-  final ValueNotifier<String?> error = ValueNotifier<String?>(null);
+  final ValueNotifier<String> error = ValueNotifier<String>('');
 
   ServiceStore({required this.repository});
 

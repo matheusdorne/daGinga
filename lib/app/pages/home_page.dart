@@ -1,29 +1,36 @@
+import 'package:daginga_server_status/app/data/repositories/services_repositories.dart';
+import 'package:daginga_server_status/app/pages/store/service_store.dart';
 import 'package:flutter/material.dart';
+import '../data/http/http_client.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    DashboardScreen(),
-    ServicesScreen(),
-    ProfileScreen(),
+    const DashboardScreen(),
+    const ServicesScreen(),
+    const ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Material 3 Navigation')),
+      appBar: AppBar(title: const Text('daGinga Server Status')),
       body: _screens[_selectedIndex],
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
@@ -51,33 +58,69 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class DashboardScreen extends StatelessWidget {
+  const DashboardScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
       child: Text(
         'Dashboard Screen',
         style: TextStyle(fontSize: 24),
+
       ),
     );
   }
 }
 
 class ServicesScreen extends StatelessWidget {
+  const ServicesScreen({super.key});
+
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'Services Screen',
-        style: TextStyle(fontSize: 24),
+    final ServiceStore store = ServiceStore(
+      repository: ServicesRepositoryImpl(
+        client: HttpClientImpl(),
       ),
     );
-  }
+    store.getServices();
+    return  Center(
+      child: AnimatedBuilder(animation: Listenable.merge([
+        store.isLoading,
+        store.error,
+        store.state,
+      ]),
+      builder: (context, _) {
+        if (store.isLoading.value) {
+          return const CircularProgressIndicator();
+        }
+
+        if (store.error.value.isNotEmpty) {
+          return Text(store.error.value!);
+        }
+
+        return ListView.builder(
+          itemCount: store.state.value.length,
+          itemBuilder: (context, index) {
+            final service = store.state.value[index];
+            return ListTile(
+              title: Text(service.name),
+              subtitle: Text(service.description),
+            );
+          },
+        );
+      }
+
+
+    ));}
 }
 
 class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
       child: Text(
         'Profile Screen',
         style: TextStyle(fontSize: 24),
@@ -103,7 +146,8 @@ class NavigationBar extends StatelessWidget {
   final Function(int) onDestinationSelected;
   final List<NavigationDestination> destinations;
 
-  NavigationBar({
+  const NavigationBar({
+    super.key,
     required this.selectedIndex,
     required this.onDestinationSelected,
     required this.destinations,
