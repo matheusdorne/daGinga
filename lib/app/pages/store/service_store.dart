@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:daginga_server_status/app/data/models/services.dart';
 import 'package:daginga_server_status/app/data/repositories/services_repositories.dart';
-
 import '../../data/http/exceptions.dart';
 
 class ServiceStore {

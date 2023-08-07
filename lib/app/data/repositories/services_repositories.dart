@@ -16,8 +16,9 @@ class ServicesRepositoryImpl implements ServicesRepository {
 
   @override
   Future<List<Service>> getServices() async {
+    
    final response = await client.get(
-     url: 'https://search.reserve4me.de/api/status/details',
+     url: 'search.reserve4me.de/api/status/details',
    );
 
    if(response.statusCode == 200) {
