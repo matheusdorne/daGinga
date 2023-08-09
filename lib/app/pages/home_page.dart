@@ -11,7 +11,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
@@ -23,14 +22,15 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('daGinga Server Status')),
+      appBar: AppBar(
+          backgroundColor: const Color.fromRGBO(172, 207, 53, 1),
+          title: const Text('daGinga Server Status')),
       body: _screens[_selectedIndex],
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
@@ -39,17 +39,17 @@ class _HomeScreenState extends State<HomeScreen> {
           NavigationDestination(
             icon: Icons.dashboard_rounded,
             label: 'Dashboard',
-            selectedColor: Colors.blue,
+            selectedColor: Colors.deepPurple,
           ),
           NavigationDestination(
             icon: Icons.miscellaneous_services,
             label: 'Services',
-            selectedColor: Colors.blue,
+            selectedColor: Colors.deepPurple,
           ),
           NavigationDestination(
             icon: Icons.account_circle_rounded,
             label: 'Profile',
-            selectedColor: Colors.blue,
+            selectedColor: Colors.deepPurple,
           ),
         ],
       ),
@@ -66,7 +66,6 @@ class DashboardScreen extends StatelessWidget {
       child: Text(
         'Dashboard Screen',
         style: TextStyle(fontSize: 24),
-
       ),
     );
   }
@@ -74,7 +73,6 @@ class DashboardScreen extends StatelessWidget {
 
 class ServicesScreen extends StatelessWidget {
   const ServicesScreen({super.key});
-
 
   @override
   Widget build(BuildContext context) {
@@ -84,35 +82,42 @@ class ServicesScreen extends StatelessWidget {
       ),
     );
     store.getServices();
-    return  Center(
-      child: AnimatedBuilder(animation: Listenable.merge([
-        store.isLoading,
-        store.error,
-        store.state,
-      ]),
-      builder: (context, _) {
-        if (store.isLoading.value) {
-          return const CircularProgressIndicator();
-        }
+    return Center(
+        child: AnimatedBuilder(
+            animation: Listenable.merge([
+              store.isLoading,
+              store.error,
+              store.state,
+            ]),
+            builder: (context, _) {
+              if (store.isLoading.value) {
+                return const CircularProgressIndicator();
+              }
 
-        if (store.error.value.isNotEmpty) {
-          return Text(store.error.value!);
-        }
+              if (store.error.value.isNotEmpty) {
+                return Center(
+                  child: Text(store.error.value),
+                );
+              }
 
-        return ListView.builder(
-          itemCount: store.state.value.length,
-          itemBuilder: (context, index) {
-            final service = store.state.value[index];
-            return ListTile(
-              title: Text(service.name),
-              subtitle: Text(service.description),
-            );
-          },
-        );
-      }
-
-
-    ));}
+              if (store.state.value.isEmpty) {
+                return const Center(
+                  child: Text('No services found'),
+                );
+              } else {
+                return ListView.builder(
+                  itemCount: store.state.value.length,
+                  itemBuilder: (context, index) {
+                    final service = store.state.value[index];
+                    return ListTile(
+                      title: Text(service.name),
+                      subtitle: Text(service.description),
+                    );
+                  },
+                );
+              }
+            }));
+  }
 }
 
 class ProfileScreen extends StatelessWidget {
