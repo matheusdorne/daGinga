@@ -8,12 +8,6 @@ abstract class ServicesRepository {
   Future<List<Service>> getServices();
 }
 
-void teste() async {
-  final HttpClient client = HttpClientImpl();
-  final response = await client.get(
-    url: 'https://search.reserve4me.de/api/status/details',
-  );
-}
 
 class ServicesRepositoryImpl implements ServicesRepository {
   final HttpClient client;
